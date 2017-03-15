@@ -2,7 +2,7 @@ type(indice).
 %   indici usati per le posizioni sulla griglia
 
 %  get_size determina predicato aperto che fornisce la dimensione della
-%  mappa, supposta quadrata; è fornito dalla base dati che rppresenta il
+%  mappa, supposta quadrata; Ã¨ fornito dalla base dati che rppresenta il
 %  mondo attuale
 indice(I) :-
 	get_size(Max),
@@ -39,7 +39,7 @@ type([p(indice,indice, terreno, oggetto)]:casella).
 
 
 pred(adiacente(casella, casella, terreno, oggetto)).
-%  adiacente(P1, P2) se P1 è adiacente a P2
+%  adiacente(P1, P2) se P1 Ã¨ adiacente a P2
 
 adiacente(p(X1,Y1,_,_), p(X2,Y2,_,_)) :-
 	( 1 is abs(X2-X1),
@@ -50,7 +50,7 @@ adiacente(p(X1,Y1,_,_), p(X2,Y2,_,_)) :-
 
 pred(distanza(tipo_distanza,casella,casella,number)).
 %  distanza(D,P1,P2,X) :  distanza D fra P1 e P2 = X
-%  dove D è una distanza; implementate manhattan e euclide
+%  dove D Ã¨ una distanza; implementate manhattan e euclide
 
 distanza(manhattan, p(X1,Y1,_,_),p(X2,Y2,_,_),M) :-
 	M is abs(X1-X2)+abs(Y1-Y2).

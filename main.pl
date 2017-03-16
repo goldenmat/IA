@@ -16,7 +16,6 @@
 	       '   permette di caricare un mondo predefinito [mondo1, mondo2, mondo3]'
 	   ]),
    nl, nl,
-   writeln('***************************'),
-   nl.
+   writeln('***************************'\nl).
 
 :- consult(mondi).

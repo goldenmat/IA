@@ -3,4 +3,5 @@
 :- use_module(library(strips)).
 :- include(library(declaration_syntax)).
 
-:- consult(terreno_random).
+:- consult(mondi).
+

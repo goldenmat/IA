@@ -51,12 +51,6 @@ strips:add_del(prende(X),State,[possiede(X)],[],1) :-
 	X = barca
 	;
 	X = aereo
-       ),
+        ),
+	not(member(possiede,X),State),
 	member(in(p(_,_,_,X),State)).
-
-
-
-
-
-
-

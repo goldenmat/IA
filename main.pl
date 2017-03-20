@@ -13,3 +13,20 @@ section(azioni).
 % Parte 2 - Include il file delle azioni alla STRIPS
 
 :- consult(azioni).
+
+section(pianificazione).
+
+% Parte 3 - Blabla
+
+:- consult(pianificazione).
+
+
+
+
+
+
+
+
+
+
+

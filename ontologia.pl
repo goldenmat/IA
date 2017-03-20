@@ -89,18 +89,3 @@ section(fluenti).
 type([in(casella), possiede(oggetto)]:fluent).
 % in(C): L'agente si trova in C.
 % possiede(O): L'agente possiede l'oggetto O.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

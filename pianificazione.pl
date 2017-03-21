@@ -29,10 +29,26 @@ path_search:heuristic(ST,_,H) :-
 	h(Name,ST,H).
 path_search:heuristic(_,_,0).
 
+% Imposto i comandi per cambiare dinamicamente l'euristica
 set_heuristic(H) :-
 	retractall(current_heuristic(_)),
 	assert(current_heuristic(H)).
 clear_heuristic :-
 	retractall(current_heuristic(_)).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+section(euristiche).
+
+pred(h(atom,state,integer)).
+% h(Name,ST,H): H è l'euristica Name dello stato ST
+% MODO: (+,+,-) det
+
+% Euristica manatthan: distanza di manhattan dalla casella in cui si
+% trova l'agente al goal
+h(manhattan, State, H) :-
+	size(Dim),
+	member(in(p(X,Y,_,_)), State),
+	distanza(p(X,Y,_,_),p(Dim,Dim,_,_),H).
 
 

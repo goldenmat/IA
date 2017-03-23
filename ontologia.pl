@@ -42,8 +42,24 @@ costo(cielo,_,1).
 costo(mare,_,2).
 costo(foresta,_,3).
 costo(deserto,X,2) :-
-	member(possiede(carro),X), !.
+	member(carro,X), !.
 costo(deserto,_X,4).
+
+pred(richiesto(terreno,list(oggetto))).
+% richiesto(T,O): Per poter muoversi su un terreno T c'è bisogno della
+% lista di oggetti O
+% MODO: (+,?) det
+richiesto(foresta,[]).
+richiesto(deserto,[]).
+richiesto(mare,[barca]).
+richiesto(cielo,[aereo]).
+
+pred(prendibile(oggetto)).
+% prendibile(O): L'oggetto O è prendibile dall'agente
+% MODO: (+) semidet
+prendibile(aereo).
+prendibile(barca).
+prendibile(carro).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,10 +104,10 @@ pred(adiacente(posizione,posizione)).
 adiacente(P1,P2) :-
 	adiacente(_,P1,P2).
 
-pred(distanza(posizione,posizione,number)).
+pred(distanza(atom,posizione,posizione,number)).
 % distanza(D,P1,P2,N): N è la distanza di tipo D tra le posizioni P1
 % e P2
-% MODO: (+,+,-) det
+% MODO: (+,+,+,-) det
 distanza(manhattan,p(X1,Y1),p(X2,Y2),N) :-
 	N is abs(X1-X2)+abs(Y1-Y2).
 distanza(euclide,p(X1,Y1),p(X2,Y2),N) :-

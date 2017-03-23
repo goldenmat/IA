@@ -19,33 +19,45 @@ pred(load_heur(atom)).
 load_heur(H) :-
 	(   implemented_heur(H) ->
 	    set_heuristic(H),
-	    writeln('Caricata euristica ':H)
-	;   writeln(H:'Euristica non disponibile, assumo euristica 0'),
+	    write('Caricata euristica: '), maplist(writeln,[H])
+	;   maplist(write,[H]), writeln(': Euristica non disponibile, assumo euristica 0'),
 	    clear_heuristic),
 	load_strategy([s:astar, p:closed]).
 
-pred(go(atom)).
-% go(H): Risolve il mondo in base dati dinamica con euristica H
-% MODO: (+) semidet
-go(H) :-
-	load_heur(H),!,
-	solve(start, goal, pn(LastNode, RevPlan, Cost, _)),
+pred(goal_cell(casella)).
+% Predicato dinamico di goal_cell, usato per ottenere l'euristica
+:- dynamic(goal_cell/1).
+
+pred(go(atom,posizione,posizione)).
+% go(H,S,G): Risolve il mondo in base dati dinamica con euristica H,
+% partendo da S e arrivando in G
+% MODO: (+,+,+) nondet
+go(H,S,G) :-
+	load_heur(H), !,
+	Start = [in(S)],
+	Goal = [in(G)|_],
+	retractall(goal_cell(_)),
+	assert(goal_cell(G)),
+	solve(start(Start), goal(Goal), pn(LastNode, RevPlan, Cost, _)),
 	reverse(RevPlan, Plan),
         writeln('Soluzione con costo':Cost),
 	maplist(writeln, Plan),
         writeln(LastNode).
+pred(go(atom)).
+% go(H): Risolve il mondo in base dati dinamica di dimensione Dim con
+% euristica H partendo da p(1,1) e arrivando in p(Dim,Dim)
+% MODO: (+) nondet
+go(H) :-
+	size(D),
+	go(H,p(1,1),p(D,D)).
 
-pred(start(state)).
-% start(S): Stato di inizio del problema, indipendente dalla dimensione
-% del mondo
-start([in(p(1,1))]).
+pred(start(state,state)).
+% start(S,S): Stato di inizio del problema
+start(S,S).
 
-pred(goal(state)).
-% goal(S): Stato di goal del problema, dipendente dalla dimensione del
-% mondo
-goal(S) :-
-	size(Dim),
-	member(in(p(Dim,Dim)),S).
+pred(goal(state,state)).
+% goal(S,S): Stato di goal del problema
+goal(S,S).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

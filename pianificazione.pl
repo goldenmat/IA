@@ -47,22 +47,16 @@ pred(h(atom,state,integer)).
 % Euristica manatthan: distanza di manhattan dalla casella in cui si
 % trova l'agente al goal
 h(manhattan, State, H) :-
-	size(Dim),
-	member(in(p(X,Y,_,_)), State),
-	distanza(p(X,Y,_,_),p(Dim,Dim,_,_),H).
+	goal_cell(G),
+	member(in(X), State),
+	distanza(manhattan,X,G,H).
 
 % Euristica euclide: distanza euclidea dalla casella in cui si trova
 % l'agente al goal
 h(euclide, State, H) :-
-	size(Dim),
-	member(in(p(X,Y,_,_)), State),
-	H is sqrt((X-Dim)^2+(Y-Dim)^2).
-
-
-
-
-
-
+	goal_cell(G),
+	member(in(X), State),
+	distanza(euclide,X,G,H).
 
 
 

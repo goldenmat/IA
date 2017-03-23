@@ -19,7 +19,7 @@ pred(load_heur(atom)).
 load_heur(H) :-
 	(   implemented_heur(H) ->
 	    set_heuristic(H),
-	    writeln(H:'Caricata euristica')
+	    writeln('Caricata euristica ':H)
 	;   writeln(H:'Euristica non disponibile, assumo euristica 0'),
 	    clear_heuristic),
 	load_strategy([s:astar, p:closed]).
@@ -38,13 +38,14 @@ go(H) :-
 pred(start(state)).
 % start(S): Stato di inizio del problema, indipendente dalla dimensione
 % del mondo
-start([in(p(1,1,start,vuoto))]).
+start([in(p(1,1))]).
 
 pred(goal(state)).
 % goal(S): Stato di goal del problema, dipendente dalla dimensione del
 % mondo
-goal([in(p(Dim,Dim,goal,vuoto))]) :-
-	size(Dim).
+goal(S) :-
+	size(Dim),
+	member(in(p(Dim,Dim)),S).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

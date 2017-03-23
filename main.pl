@@ -13,10 +13,12 @@
 :- include(library(declaration_syntax)).
 
 section(ontologia).
-% Parte 1 - Include i file dell'ontologia e della generazione di mondi
+% Parte 1 - Include i file dell'ontologia, della generazione di mondi e
+% dei mondi salvati.
 
 :- consult(ontologia).
-:- consult(mondi).
+:- consult(generazione).
+:- consult(salvati).
 
 section(azioni).
 % Parte 2 - Include il file delle azioni alla STRIPS
@@ -35,3 +37,8 @@ section(soluzione).
 % Parte 4 - Include il file che definisce l'algoritmo di soluzione
 
 :- consult(soluzione).
+
+
+
+
+

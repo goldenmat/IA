@@ -15,23 +15,35 @@ indice(I) :-
 	size(Max),
 	between(1,Max,I).
 
-type([deserto, foresta, cielo, mare, piastrella]:terreno).
+type([p(indice,indice)]:posizione).
+% Le posizioni delle caselle all'interno della griglia rappresentante il
+% mondo
+
+type([deserto, foresta, cielo, mare]:terreno).
 % Tipi di terreno
 
-type([aereo, nave, carro, magnete, vuoto]:oggetto).
+type([aereo, nave, carro, magnete]:oggetto).
 % Tipi di oggetto
 
-type([start,goal]:special).
-% Tipi speciali di terreno (caselle di start e goal)
-
-type([p(indice,indice, [terreno,special], oggetto)]:casella).
-% p(X,Y,T,O): casella in riga X, colonna Y, di terreno T e contenente
+type([c(posizione, terreno, list(oggetto))]:casella).
+% c(p(X,Y),T,O): casella in riga X, colonna Y, di terreno T e contenente
 % oggetto O. Il terreno è special per le caselle di start e goal.
 %
-%           1               2	       3      ....
-% 1  (1,1,start,vuoto), (1,2,T,O), (1,3,T,O), ....
-% 2  (2,1,T,O),         (2,2,T,O), (2,3,T,O), ....
-% 3  (3,1,T,O),         (2,3,T,O), (3,3,T,O), ....
+%           1              2	          3       ....
+% 1  c(p(1,1),T,O), c(p(1,2),T,O), c(p(1,3),T,O), ....
+% 2  c(p(2,1),T,O), c(p(2,2),T,O), c(p(2,3),T,O), ....
+% 3  c(p(3,1),T,O), c(p(2,3),T,O), c(p(3,3),T,O), ....
+
+pred(costo(terreno,list(oggetto),integer)).
+% costo(T,O,C): L'azione di muoversi su una casella con terreno T,
+% possedendo una lista O di oggetti ha costo C.
+% MODO: (+,+,-) det
+costo(cielo,_,1).
+costo(mare,_,2).
+costo(foresta,_,3).
+costo(deserto,X,2) :-
+	member(possiede(carro),X), !.
+costo(deserto,_X,4).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -52,17 +64,17 @@ dir(est,1, 0).
 dir(nord,0,-1).
 dir(sud,0,1).
 
-pred(adiacente(cardinale,casella,casella)).
+pred(adiacente(cardinale,posizione,posizione)).
 % adiacente(D,P1,P2): Il punto P1 è adiacente al punto P2 in direzione D
 % MODO: (?,+,?) nondet
-adiacente(D,p(X1,Y1,_,_),p(X2,Y2,_,_)) :-
+adiacente(D,p(X1,Y1),p(X2,Y2)) :-
 	ground(X1),!,
 	dir(D,DX,DY),
 	X2 is X1+DX,
 	Y2 is Y1+DY,
 	indice(X2),
 	indice(Y2).
-adiacente(D,p(X1,Y1,_,_),p(X2,Y2,_,_)) :-
+adiacente(D,p(X1,Y1),p(X2,Y2)) :-
 	ground(X2),
 	dir(D,DX,DY),
 	X1 is X2+DX,
@@ -70,22 +82,26 @@ adiacente(D,p(X1,Y1,_,_),p(X2,Y2,_,_)) :-
 	indice(X1),
 	indice(Y1).
 
-pred(adiacente(casella,casella)).
+pred(adiacente(posizione,posizione)).
 % adiacente(P1,P2): Il punto P1 è adiacente al punto P2
 % MODO: (?,+) nondet
 adiacente(P1,P2) :-
 	adiacente(_,P1,P2).
 
-pred(distanza(casella,casella,number)).
-% distanza(C1,C2,N): N è la distanza di manhattan tra le caselle C1 e C2
+pred(distanza(posizione,posizione,number)).
+% distanza(D,P1,P2,N): N è la distanza di tipo D tra le posizioni P1
+% e P2
 % MODO: (+,+,-) det
-distanza(p(X1,Y1,_,_),p(X2,Y2,_,_),N) :-
+distanza(manhattan,p(X1,Y1),p(X2,Y2),N) :-
 	N is abs(X1-X2)+abs(Y1-Y2).
+distanza(euclide,p(X1,Y1),p(X2,Y2),N) :-
+	N is sqrt((X1-X2)^2+(Y1-Y2)^2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 section(fluenti).
 
-type([in(casella), possiede(oggetto)]:fluent).
-% in(C): L'agente si trova in C.
+
+type([in(posizione), possiede(oggetto)]:fluent).
+% in(P): L'agente si trova nella posizione P.
 % possiede(O): L'agente possiede l'oggetto O.

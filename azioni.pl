@@ -10,10 +10,6 @@ type([va(posizione),prende(oggetto)]:action).
 % va(P): L'agente va nella posizione P.
 % prende(O): L'agente prende l'oggetto O.
 
-test_state(K,[A,S2,C]) :-
-	list_to_ord_set(K,S),
-	do_action(A,S,S2,C).
-
 strips:add_del(va(P),State,[in(P)],[in(C)|DEL],Cost) :-
 	member(in(C),State),
 	adiacente(C,P),
@@ -47,4 +43,15 @@ strips:add_del(prende(X),State,[possiede(X)],[],1) :-
 
 section(debugging).
 
+debug_action(Before,Strategy,After) :-
+	load_strategy([Strategy]),
+	solve(start(Before),goal(_),pn(After,RevPath,_,_)),
+	reverse([After|RevPath],Path),
+	states_to_transitions(Path,Trans),
+	length(RevPath,Len),
+	write('Cammino con lunghezza: '),
+	maplist(writeln,[Len]),
+	maplist(show_action, Trans).
 
+show_action(X) :-
+	writeln(X).

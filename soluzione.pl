@@ -40,9 +40,14 @@ go(H,S,G) :-
 	assert(goal_cell(G)),
 	solve(start(Start), goal(Goal), pn(LastNode, RevPlan, Cost, _)),
 	reverse(RevPlan, Plan),
-        writeln('Soluzione con costo':Cost),
+	writeln('--------------------'),
+        write('Soluzione con costo: '), maplist(writeln,[Cost]),
+	writeln('--------------------'),
+	writeln('* Lista azioni *'),
 	maplist(writeln, Plan),
-        writeln(LastNode).
+	writeln('--------------------'),
+	write('Stato finale: '), writeln(LastNode).
+
 pred(go(atom)).
 % go(H): Risolve il mondo in base dati dinamica di dimensione Dim con
 % euristica H partendo da p(1,1) e arrivando in p(Dim,Dim)
@@ -51,12 +56,27 @@ go(H) :-
 	size(D),
 	go(H,p(1,1),p(D,D)).
 
+pred(go_random(atom)).
+% go_random(H): Risolve il mondo in base dati dinamica con euristica H e
+% partendo ed arrivando in due caselle casuali
+% MODO: (+) nondet
+go_random(H) :-
+	size(Size),
+	D is Size+1,
+	random(1,D,X1),
+	random(1,D,Y1),
+	random(1,D,X2),
+	random(1,D,Y2),
+	write('Start: p('), maplist(write,[X1]), write(','), maplist(write,[Y1]), writeln(')'),
+	write('Goal: p('), maplist(write,[X2]), write(','), maplist(write,[Y2]), writeln(')'),
+	go(H,p(X1,Y1),p(X2,Y2)).
+
 pred(start(state,state)).
-% start(S,S): Stato di inizio del problema
+% start(S,S): Stato di inizio del problema, chiamato dal predicato go/3
 start(S,S).
 
 pred(goal(state,state)).
-% goal(S,S): Stato di goal del problema
+% goal(S,S): Stato di goal del problema, chiamato dal predicato go/3
 goal(S,S).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,12 +84,3 @@ goal(S,S).
 section(istruzioni).
 
 % Da prendere quelle di Sam e ampliare
-
-
-
-
-
-
-
-
-

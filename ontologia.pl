@@ -121,3 +121,5 @@ section(fluenti).
 type([in(posizione), possiede(oggetto)]:fluent).
 % in(P): L'agente si trova nella posizione P.
 % possiede(O): L'agente possiede l'oggetto O.
+
+

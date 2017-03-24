@@ -58,7 +58,19 @@ h(euclide, State, H) :-
 	member(in(X), State),
 	distanza(euclide,X,G,H).
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+section(debugging).
 
-
+debug_heuristic(Start,Heur) :-
+	load_strategy([s:astar, p:closed]),
+	load_heur(Heur), !,
+	size(D),
+	Goal = [in(p(D,D))|_],
+	retractall(goal_cell(_)),
+	assert(goal_cell(p(D,D))),
+	solve(start(Start), goal(Goal), pn(LastNode, _RevPath, Cost, H)),
+	F is Cost+H,
+	writeln('nodo raggiunto con C:H:F':Cost:H:F),
+	writeln(LastNode).
 

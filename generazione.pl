@@ -139,52 +139,71 @@ pred(oggetto_f_random(list(oggetto))).
 % MODO: (-) det
 oggetto_f_random(O) :-
 	random(1,11,X),
-	associa_o_f(X,O).
+	(
+	    X = 1,
+	    O = [magnete]
+	    ;
+	    associa_o_f(O)
+	).
 
-pred(associa_o_f(integer,list(oggetto))).
-% associa_o_f(X,O): Associa il numero X alla lista di oggetti O, per la
+pred(associa_o_f(list(oggetto))).
+% associa_o_f(O): Genera una lista di oggetti O, per la
 % generazione pseudocasuale degli oggetti del terreno foresta
-% MODO: (+,-) det
-associa_o_f(1,[carro]) :- !.
-associa_o_f(2,[barca]) :- !.
-associa_o_f(3,[aereo]) :- !.
-associa_o_f(4,[magnete]) :- !.
-associa_o_f(_X,[]).
+% MODO: (-) det
+associa_o_f(O) :-
+	O1 = [],
+	random(1,5,X),
+	random(1,5,Y),
+	random(1,5,Z),
+	(   X=1, append(O1,[aereo],O2); X\=1,O1=O2),
+	(   Y=1, append(O2,[barca],O3); Y\=1,O2=O3),
+	(   Z=1, append(O3,[carro],O); Z\=1,O3=O).
 
 pred(oggetto_d_random(list(oggetto))).
 % oggetto_d_random(O): Genera una lista di oggetti pseudocasuale per il
 % terreno deserto
 % MODO: (-) det
 oggetto_d_random(O) :-
-	random(1,10,X),
-	associa_o_d(X,O).
+	random(1,11,X),
+	(
+	    X = 1,
+	    O = [magnete]
+	    ;
+	    associa_o_d(O)
+	).
 
-pred(associa_o_d(integer,list(oggetto))).
-% associa_o_d(X,O): Associa il numero X alla lista di oggetti O, per la
+pred(associa_o_d(list(oggetto))).
+% associa_o_d(O): Genera una lista di oggetti O, per la
 % generazione pseudocasuale degli oggetti del terreno deserto
-% MODO: (+,-) det
-associa_o_d(1, [barca]) :- !.
-associa_o_d(2, [aereo]) :- !.
-associa_o_d(3, [magnete]) :- !.
-associa_o_d(_X, []).
+% MODO: (-) det
+associa_o_d(O) :-
+	O1 = [],
+	random(1,5,X),
+	random(1,5,Y),
+	(   X=1, append(O1,[aereo],O2); X\=1,O1=O2),
+	(   Y=1, append(O2,[barca],O); Y\=1,O2=O).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 section(visualizzazione).
 % Visualizzazione di un mondo
 
-pred(significa(atom,atom)).
+pred(significa(atom,[terreno,list(oggetto)])).
 % significa(S,X): associa a X il simbolo S.
 % MODO: (-,+) det
 significa(1,cielo).
 significa(2,mare).
 significa(3,foresta).
 significa(4,deserto).
-significa('A',[aereo]).
-significa('B',[barca]).
-significa('C',[carro]).
-significa('M',[magnete]).
-significa(-,[]).
+significa('A--',[aereo]).
+significa('-B-',[barca]).
+significa('--C',[carro]).
+significa('AB-',[aereo,barca]).
+significa('A-C',[aereo,carro]).
+significa('-BC',[barca,carro]).
+significa('ABC',[aereo,barca,carro]).
+significa('-M-',[magnete]).
+significa('---',[]).
 
 pred(stampa_mondo).
 % stampa_mondo: Stampa il mondo caricato in base dati dinamica
@@ -196,9 +215,9 @@ stampa_mondo :-
 	forall(between(1,D,K1),
 	       (
 		   K1 is D, !,
-		   writeln('----|')
+		   writeln('-------|')
 		   ;
-		   write('----|')
+		   write('-------|')
 	       )
 	      ),
 
@@ -212,6 +231,7 @@ stampa_mondo :-
 			      significa(O1,O),
 			      write(' '),
 			      write(T1),
+			      write('|'),
 			      write(O1),
 			      write(' '),
 			      (
@@ -227,10 +247,13 @@ stampa_mondo :-
 		   forall(between(1,D,K2),
 			  (
 			      K2 is D, !,
-			      writeln('----|')
+			      writeln('-------|')
 			      ;
-			      write('----|')
+			      write('-------|')
 			  )
 			 )
 	       )
 	      ).
+
+
+

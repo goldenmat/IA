@@ -43,9 +43,9 @@ strips:add_del(prende(X),State,[possiede(X)],[],1) :-
 
 section(debugging).
 
-debug_action(Before,Strategy,After) :-
+debug_action(Before,After,Strategy) :-
 	load_strategy([Strategy]),
-	solve(start(Before),goal(_),pn(After,RevPath,_,_)),
+	solve(start(Before),goal(After),pn(After,RevPath,_,_)),
 	reverse([After|RevPath],Path),
 	states_to_transitions(Path,Trans),
 	length(RevPath,Len),

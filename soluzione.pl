@@ -7,7 +7,7 @@
 section(soluzione).
 
 pred(implemented_heur(atom)).
-% implemented_heur(H): Metaprogrammazione, dice se l'euristica H �
+% implemented_heur(H): Metaprogrammazione, dice se l'euristica H è
 % definita nel programma
 % MODO: (+) semidet
 implemented_heur(H) :-
@@ -83,4 +83,34 @@ goal(S,S).
 
 section(istruzioni).
 
-% Da prendere quelle di Sam e ampliare
+
+:- writeln('***************   PROGETTO:    ********************'),
+     writeln('il progetto consiste nell"implementazione logica di un gioco. Il gioco è basato su un agente che si muove in un mondo quadrato.\nIl mondo è costituito da caselle identicificate con territori: aria, mare, foresta, deserto. Il passaggio da un territorio ad un altro ha un costo specifico pari a: 1 nel caso dell aria, 2 nel caso dell acqua, 3 nel caso della foresta, 4 nel caso del deserto. Nel mondo si trovano in oltre degli oggetti, quali: aereo (senza il quale non si può andare nella casella aria), barca senza la quale non si può andare nella casella mare) e deserto (il quale abbasta il costo del deserto da 4 a 2).\nIn oltre è implementato un magnete: si trove su una casella e se l agente passa da essa perde tutti gli oggetti trovati posseduti fino ad allora.\nIl programma creato permette in base a delle euristiche preimpostate la possibilità di trovare una strada ottimale secondo il metodo di ricerca.\n\n'),
+     writeln('***************************************************\n').
+
+:- writeln('*************   COMANDI UTILI    ******************'),
+     nl,
+     maplist(writeln, [
+	       '   genera_mondo(I).',
+	       '   genera un mondo con la dimensione inserita in I [I è un nat]\n',
+	       '   stampa_mondo',
+	       '   permette la visualizzazione grafica del mondo\n',
+	       '   get_mondo(X).',
+	       '   restituisce il mondo casella per casella, X è una variabile\n',
+	       '   carica_mondo(<mondo>).',
+	       '   permette di caricare un mondo predefinito [mondo1, mondo2, mondo3]\n',
+	       '   salva_mondo(<mondo>).',
+	       '   permette di salvare il mondo corrente, per salvarlo inserirlo in mondoN (dove N è un numero)\n',
+	       '   go(<euristica>).',
+	       '   inserendo il nome di un euristica (manhatta/euclidea),',
+	       '   il programma restituirà la soluzione ottimale\n',
+	       '   go_random(<euristica>).',
+	       '   inserendo il nome di un euristica (manhatta/euclidea),',
+	       '   il programma restituirà la soluzione ottimale tra 2 caselle casuali\n',
+	       '   go(Start,Goal,<euristica>).',
+	       '   inserendo il nome di un euristica (manhatta/euclidea),',
+	       '   il programma restituirà la soluzione ottimale tra 2 caselle Start e Goal\n'
+     ]),
+     nl,
+     writeln('***************************************************\n').
+

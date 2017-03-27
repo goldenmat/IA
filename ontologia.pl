@@ -8,15 +8,15 @@ section(ontologia).
 
 type(indice).
 % Gli indici usati per le posizioni sulla griglia.
-% size(Dim) è un predicato aperto contenuto in mondi.pl, che stabilisce
-% la dimensione del lato del mondo.
+% size(Dim) è un predicato aperto contenuto in generazione.pl, che
+% stabilisce la dimensione del lato del mondo.
 
 indice(I) :-
 	size(Max),
 	between(1,Max,I).
 
 type([p(indice,indice)]:posizione).
-% Le posizioni delle caselle all'interno della griglia rappresentante il
+% Le posizioni all'interno della griglia rappresentante il
 % mondo
 
 type([deserto, foresta, cielo, mare]:terreno).
@@ -27,7 +27,7 @@ type([aereo, nave, carro, magnete]:oggetto).
 
 type([c(posizione, terreno, list(oggetto))]:casella).
 % c(p(X,Y),T,O): casella in riga X, colonna Y, di terreno T e contenente
-% oggetto O. Il terreno è special per le caselle di start e goal.
+% la lista di oggetti O.
 %
 %           1              2	          3       ....
 % 1  c(p(1,1),T,O), c(p(1,2),T,O), c(p(1,3),T,O), ....
@@ -48,7 +48,7 @@ costo(deserto,_X,4).
 pred(richiesto(terreno,list(oggetto))).
 % richiesto(T,O): Per poter muoversi su un terreno T c'è bisogno della
 % lista di oggetti O
-% MODO: (+,?) det
+% MODO: (+,-) det
 richiesto(foresta,[]).
 richiesto(deserto,[]).
 richiesto(mare,[barca]).
@@ -75,10 +75,10 @@ pred(dir(cardinale,spostamento,spostamento)).
 % dir(D,S1,S2): S1 e S2 sono gli spostamenti unitari in direzione D
 % MODO: (-,+,+) det
 % MODO: (+,-,-) det
-dir(ovest,-1,0).
-dir(est,1, 0).
 dir(nord,0,-1).
 dir(sud,0,1).
+dir(ovest,-1,0).
+dir(est,1, 0).
 
 pred(adiacente(cardinale,posizione,posizione)).
 % adiacente(D,P1,P2): Il punto P1 è adiacente al punto P2 in direzione D
@@ -100,7 +100,7 @@ adiacente(D,p(X1,Y1),p(X2,Y2)) :-
 
 pred(adiacente(posizione,posizione)).
 % adiacente(P1,P2): Il punto P1 è adiacente al punto P2
-% MODO: (?,+) nondet
+% MODO: (+,?) nondet
 adiacente(P1,P2) :-
 	adiacente(_,P1,P2).
 
@@ -121,5 +121,3 @@ section(fluenti).
 type([in(posizione), possiede(oggetto)]:fluent).
 % in(P): L'agente si trova nella posizione P.
 % possiede(O): L'agente possiede l'oggetto O.
-
-

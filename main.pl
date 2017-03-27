@@ -39,6 +39,3 @@ section(soluzione).
 % istruzioni per utilizzare l'interprete
 
 :- consult(soluzione).
-
-
-

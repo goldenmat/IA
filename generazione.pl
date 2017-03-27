@@ -8,11 +8,13 @@ section(predicati_dinamici).
 % Predicati per la base dati dinamica
 
 pred(size(integer)).
-% size(Dim): Predicato dinamico che indica la grandezza del mondo preso
-% in considerazione (come lato di un quadrato).
+% size(Dim): Predicato dinamico che indica la grandezza Dim del mondo
+% preso in considerazione (come lato di un quadrato).
+% MODO: (-) semidet
 pred(mondo(casella)).
 % mondo(X): Predicato dinamico che indica come è composto il mondo preso
-% in considerazione (caselle in basi dati dinamica).
+% in considerazione (caselle X in basi dati dinamica).
+% MODO: (?) nondet
 :- dynamic(size/1).
 :- dynamic(mondo/1).
 
@@ -24,7 +26,6 @@ section(generazione).
 pred(genera_mondo(integer)).
 % genera_mondo(Dim): Genera un mondo pseudocasuale, di dimensione Dim
 % MODO: (+) det
-% Fai predicati start e goal, con una sola casella
 genera_mondo(Dim) :-
 	not(between(2,10,Dim)), !,
 	writeln("Errore, inserisci un valore della dimensione compreso tra 2 e 10")
@@ -44,14 +45,14 @@ genera_mondo(Dim) :-
 	      ).
 
 pred(get_mondo(casella)).
-% get_mondo(X): Stampa il mondo come elenco di caselle
+% get_mondo(X): Stampa il mondo come elenco di caselle X
 % MODO: (?) nondet
 get_mondo(X) :- mondo(X).
 
 pred(salva_mondo(atom)).
-% salva_mondo(M): Salva il mondo in base dati dinamica nel sorgente in
-% modo che possa essere caricato tramite caricato utilizzando
-% carica_mondo(M) in una seconda istanza.
+% salva_mondo(M): Salva il mondo in base dati dinamica nel sorgente come
+% una clausola in modo che possa essere caricato tramite caricato
+% utilizzando carica_mondo(M) in una seconda istanza.
 salva_mondo(N) :-
 	clause(carica_mondo(N),_), !,
 	writeln("Errore - Il mondo esiste già, scegli un altro nome")
@@ -254,6 +255,3 @@ stampa_mondo :-
 			 )
 	       )
 	      ).
-
-
-

@@ -61,14 +61,14 @@ pred(debug_heuristic(posizione,posizione,atom)).
 % ogni soluzione stampa il costo, l'euristica verso il goal standard
 % (p(Dim,Dim) - Dim dimensione del mondo) e la somma di questi ultimi
 % MODO: (+,+,+) nondet
-debug_heuristic(Start,Goal,Heur) :-
+debug_heuristic(Start,End,Heur) :-
 	load_strategy([s:astar, p:closed]),
 	load_heur(Heur), !,
 	size(D),
-	G = [in(Goal)|_],
+	E = [in(End)|_],
 	retractall(goal_cell(_)),
 	assert(goal_cell(p(D,D))),
-	solve(start([in(Start)]), goal(G), pn(LastNode, _RevPath, Cost, H)),
+	solve(start([in(Start)]), goal(E), pn(LastNode, _RevPath, Cost, H)),
 	F is Cost+H,
 	write('Nodo raggiunto con Costo(C) - Euristica(H) - Costo di frontiera(C+H): '),
 	write('('), maplist(write,[Cost]), write(' - '), maplist(write,[H]), write(' - '), maplist(write,[F]), writeln(')'),
@@ -79,11 +79,7 @@ pred(debug_heuristic(atom)).
 % casella p(1,1) fino ad arrivare alla casella p(Dim,Dim) con Dim
 % dimensione del mondo. Per ogni soluzione stampa i valori di costo,
 % euristica e la somma di questi ultimi
+% MODO: (+) nondet
 debug_heuristic(Heur) :-
 	size(D),
 	debug_heuristic(p(1,1),p(D,D),Heur).
-
-
-
-
-

@@ -43,15 +43,36 @@ strips:add_del(prende(X),State,[possiede(X)],[],1) :-
 
 section(debugging).
 
-debug_action(Before,After,Strategy) :-
-	load_strategy([Strategy]),
-	solve(start(Before),goal(After),pn(After,RevPath,_,_)),
-	reverse([After|RevPath],Path),
-	states_to_transitions(Path,Trans),
-	length(RevPath,Len),
-	write('Cammino con lunghezza: '),
-	maplist(writeln,[Len]),
-	maplist(show_action, Trans).
-
-show_action(X) :-
-	writeln(X).
+pred(debug_action(atom,state)).
+% debug_action(S,Start): Mostra la lista delle azioni identificate
+% dal piano dell'algoritmo partendo da Start per arrivare a un qualsiasi
+% goal con strategia S.
+% MODO: (+,+) nondet
+debug_action(Strat,Start) :-
+	clear_heuristic,
+	load_strategy([Strat]),
+	solve(start(Start), goal(_Goal), pn(LastNode, Rev, _C, _H)),
+	Rev=[X|_],
+	   (
+		is_a(action,X) ->
+		reverse(Rev,Path),
+		writeln('--------------------'),
+		write('Stato di partenza: '),
+		writeln(Start),
+		writeln('--------------------'),
+		writeln('* Lista azioni *'),
+		maplist(writeln,Path),
+		writeln('--------------------'),
+		length(Path,L),
+		write('Cammino di lunghezza: '), writeln(L),
+		write('Stato finale: '), writeln(LastNode)
+		;
+		reverse(Rev,Path),
+		writeln('--------------------'),
+		writeln('* Lista stati *'),
+		maplist(writeln,Path),
+		writeln('--------------------'),
+		length(Path,L),
+		write('Cammino di lunghezza: '), writeln(L),
+		write('Stato finale: '), writeln(LastNode)
+	    ).

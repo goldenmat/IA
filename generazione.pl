@@ -60,9 +60,9 @@ salva_mondo(N) :-
 	open('salvati.pl',append,OS,[encoding(utf8)]),
 	nl(OS), write(OS,'carica_mondo('), maplist(write,[OS],[N]), write(OS,') :-'), nl(OS),
 	size(D),
-	write(OS,'retractall(size(_)),'), nl(OS),
-	write(OS,'retractall(mondo(_)),'),nl(OS),
-	write(OS,'assert(size('),maplist(write,[OS],[D]),write(OS,')),'),nl(OS),
+	tab(OS,8), write(OS,'retractall(size(_)),'), nl(OS),
+	tab(OS,8), write(OS,'retractall(mondo(_)),'),nl(OS),
+	tab(OS,8), write(OS,'assert(size('),maplist(write,[OS],[D]),write(OS,')),'),nl(OS),
 	forall(between(1,D,X),
 	       (
 		   forall(between(1,D,Y),

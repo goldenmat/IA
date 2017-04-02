@@ -48,6 +48,29 @@ go(H,S,G) :-
 	writeln('--------------------'),
 	write('Stato finale: '), writeln(LastNode).
 
+pred(go_graphic(atom,posizione,posizione)).
+% go(H,S,G): Risolve il mondo in base dati dinamica con euristica H,
+% partendo da S e arrivando in G. Stampa il percorso seguito dall'agente
+% MODO: (+,+,+) nondet
+go_graphic(H,S,G) :-
+	load_heur(H), !,
+	Start = [in(S)],
+	Goal = [in(G)|_],
+	retractall(goal_cell(_)),
+	assert(goal_cell(G)),
+	solve(start(Start), goal(Goal), pn(LastNode, RevPlan, Cost, _)),
+	reverse(RevPlan, Plan),
+	writeln('--------------------'),
+        write('Soluzione con costo: '), maplist(writeln,[Cost]),
+	writeln('--------------------'),
+	writeln('* Lista azioni *'),
+	maplist(writeln, Plan),
+	writeln('--------------------'),
+	write('Stato finale: '), writeln(LastNode),
+	writeln('--------------------'),
+	writeln('Cammino agente'),
+	stampa_mondo(Plan).
+
 pred(go(atom)).
 % go(H): Risolve il mondo in base dati dinamica di dimensione Dim con
 % euristica H partendo da p(1,1) e arrivando in p(Dim,Dim)
@@ -55,6 +78,15 @@ pred(go(atom)).
 go(H) :-
 	size(D),
 	go(H,p(1,1),p(D,D)).
+
+pred(go_graphic(atom)).
+% go_graphic(H): Risolve il mondo in base dati dinamica di dimensione
+% Dim con euristica H partendo da p(1,1) e arrivando in p(Dim,Dim).
+% Stampa il percorso seguito dall'agente
+% MODO: (+) nondet
+go_graphic(H) :-
+	size(D),
+	go_graphic(H,p(1,1),p(D,D)).
 
 pred(go_random(atom)).
 % go_random(H): Risolve il mondo in base dati dinamica con euristica H e
@@ -69,7 +101,25 @@ go_random(H) :-
 	random(1,D,Y2),
 	write('Start: p('), maplist(write,[X1]), write(','), maplist(write,[Y1]), writeln(')'),
 	write('Goal: p('), maplist(write,[X2]), write(','), maplist(write,[Y2]), writeln(')'),
+	writeln('--------------------'),
 	go(H,p(X1,Y1),p(X2,Y2)).
+
+pred(go_random_graphic(atom)).
+% go_random(H): Risolve il mondo in base dati dinamica con euristica H e
+% partendo ed arrivando in due caselle casuali. Stampa il percorso
+% seguito dall'agente
+% MODO: (+) nondet
+go_random_graphic(H) :-
+	size(Size),
+	D is Size+1,
+	random(1,D,X1),
+	random(1,D,Y1),
+	random(1,D,X2),
+	random(1,D,Y2),
+	write('Start: p('), maplist(write,[X1]), write(','), maplist(write,[Y1]), writeln(')'),
+	write('Goal: p('), maplist(write,[X2]), write(','), maplist(write,[Y2]), writeln(')'),
+	writeln('--------------------'),
+	go_graphic(H,p(X1,Y1),p(X2,Y2)).
 
 pred(start(state,state)).
 % start(S,S): Stato di inizio del problema, chiamato dal predicato go/3
@@ -114,10 +164,16 @@ istruzioni :-
 	       '    Restituisce la lista delle caselle che compongono il mondo (X è una variabile)\n',
 	       '  + go(<euristica>).',
 	       '    Risolve il problema secondo l\'euristica inserita (se esiste), a partire da p(1,1) fino a p(Dim,Dim) con Dim dimensione del mondo\n',
+	       '  + go_graphic(<euristica>).',
+	       '    Come sopra, ma stampa il cammino dell\'agente\n',
 	       '  + go(Start,Goal,<euristica>).',
 	       '    Risolve il problema secondo l\'euristica inserita (se esiste), a partire da Start fino a Goal\n',
+	       '  + go_graphic(Start,Goal,<euristica>).',
+	       '    Come sopra, ma stampa il cammino dell\'agente\n',
 	       '  + go_random(<euristica>).',
-	       '    Risolve il problema secondo l\'euristica inserita (se esiste), a partire da uno Start e arrivando ad un Goal scelti in modo pseudocasuale\n'
+	       '    Risolve il problema secondo l\'euristica inserita (se esiste), a partire da uno Start e arrivando ad un Goal scelti in modo pseudocasuale\n',
+	       '  + go_random_graphic(<euristica>).',
+	       '    Come sopra, ma stampa il cammino dell\'agente\n'
      ]),
      nl,
      writeln('***********************************************************\n').

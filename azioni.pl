@@ -65,7 +65,10 @@ debug_action(Strat,Start) :-
 		writeln('--------------------'),
 		length(Path,L),
 		write('Cammino di lunghezza: '), writeln(L),
-		write('Stato finale: '), writeln(LastNode)
+		write('Stato finale: '), writeln(LastNode),
+		writeln('--------------------'),
+		writeln('Cammino agente'),
+		stampa_mondo(Path)
 		;
 		reverse(Rev,Path),
 		writeln('--------------------'),
@@ -74,5 +77,8 @@ debug_action(Strat,Start) :-
 		writeln('--------------------'),
 		length(Path,L),
 		write('Cammino di lunghezza: '), writeln(L),
-		write('Stato finale: '), writeln(LastNode)
+		write('Stato finale: '), writeln(LastNode),
+		writeln('--------------------'),
+		writeln('Cammino agente'),
+		stampa_mondo(Path)
 	    ).

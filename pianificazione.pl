@@ -51,6 +51,26 @@ h(D, State, H) :-
 	member(in(X), State),
 	distanza(D,X,G,H).
 
+% Euristica manhattan_migliorata: distanza di manhattan, creata
+% moltiplicando la distanza di manhattan tra casella in cui si trova
+% l'agente e il goal per un coefficiente (peso della casella successiva
+% media, contando i pesi della generazione random di terreni). Due casi
+% diversi nel caso in cui l'agente possieda il carro o meno.
+%
+% ATTENZIONE - È un euristica non consistente, può non trovare per prime
+% le soluzioni ottimali
+h(manhattan_migliorata, State, H) :-
+	member(possiede(carro), State), !,
+	goal_cell(G),
+	member(in(X), State),
+	distanza(manhattan,X,G,H1),
+	H is H1*2.16.
+h(manhattan_migliorata, State, H) :-
+	goal_cell(G),
+	member(in(X), State),
+	distanza(manhattan,X,G,H1),
+	H is H1*2.83.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 section(debugging).
@@ -84,3 +104,17 @@ pred(debug_heuristic(atom)).
 debug_heuristic(Heur) :-
 	size(D),
 	debug_heuristic(p(1,1),p(D,D),Heur).
+
+
+
+
+
+
+
+
+
+
+
+
+
+

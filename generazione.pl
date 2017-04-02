@@ -27,7 +27,7 @@ pred(genera_mondo(integer)).
 % genera_mondo(Dim): Genera un mondo pseudocasuale, di dimensione Dim
 % MODO: (+) det
 genera_mondo(Dim) :-
-	not(between(2,10,Dim)), !,
+	not(between(2,30,Dim)), !,
 	writeln("Errore, inserisci un valore della dimensione compreso tra 2 e 10")
 	;
 	retractall(size(_)),
@@ -216,9 +216,9 @@ stampa_mondo :-
 	forall(between(1,D,K1),
 	       (
 		   K1 is D, !,
-		   writeln('-------|')
+		   writeln('-----|')
 		   ;
-		   write('-------|')
+		   write('-----|')
 	       )
 	      ),
 
@@ -230,11 +230,9 @@ stampa_mondo :-
 			      mondo(c(p(Row,Col),T,O)),
 			      significa(T1,T),
 			      significa(O1,O),
-			      write(' '),
 			      write(T1),
 			      write('|'),
 			      write(O1),
-			      write(' '),
 			      (
 			      Col is D, !,
 			      writeln('|')
@@ -248,10 +246,71 @@ stampa_mondo :-
 		   forall(between(1,D,K2),
 			  (
 			      K2 is D, !,
-			      writeln('-------|')
+			      writeln('-----|')
 			      ;
-			      write('-------|')
+			      write('-----|')
 			  )
 			 )
 	       )
 	      ).
+
+pred(stampa_mondo(list(action))).
+% stampa_mondo(C): Stampa il mondo caricato in base dati dinamica, nel
+% quale viene evidenziato il cammino C
+% MODO: (+) semidet
+stampa_mondo(C) :-
+	size(D),
+
+	write('|'),
+	forall(between(1,D,K1),
+	       (
+		   K1 is D, !,
+		   writeln('-----|')
+		   ;
+		   write('-----|')
+	       )
+	      ),
+
+	forall(between(1,D,Row),
+	       (
+		   write('|'),
+		   forall(between(1,D,Col),
+			  (
+			      mondo(c(p(Row,Col),T,O)),
+			      significa(T1,T),
+			      significa(O1,O),
+			      (
+				  member(va(p(Row,Col)),C),
+				  ansi_format([fg(blue)],'~w',[T1])
+				  ;
+				  not(member(va(p(Row,Col)),C)),
+				  write(T1)
+			      ),
+			      write('|'),
+			      write(O1),
+			      (
+			      Col is D, !,
+			      writeln('|')
+			      ;
+			      write('|')
+			      )
+			  )
+			 ),
+
+		   write('|'),
+		   forall(between(1,D,K2),
+			  (
+			      K2 is D, !,
+			      writeln('-----|')
+			      ;
+			      write('-----|')
+			  )
+			 )
+	       )
+	      ).
+
+
+
+
+
+

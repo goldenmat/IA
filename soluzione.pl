@@ -69,7 +69,7 @@ go_graphic(H,S,G) :-
 	write('Stato finale: '), writeln(LastNode),
 	writeln('--------------------'),
 	writeln('Cammino agente'),
-	stampa_mondo(Plan).
+	stampa_mondo([va(S)|Plan]).
 
 pred(go(atom)).
 % go(H): Risolve il mondo in base dati dinamica di dimensione Dim con

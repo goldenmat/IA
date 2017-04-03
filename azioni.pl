@@ -51,6 +51,7 @@ pred(debug_action(atom,state)).
 debug_action(Strat,Start) :-
 	clear_heuristic,
 	load_strategy([Strat]),
+	member(in(p(S1,S2)),Start),
 	solve(start(Start), goal(_Goal), pn(LastNode, Rev, _C, _H)),
 	Rev=[X|_],
 	   (
@@ -68,7 +69,7 @@ debug_action(Strat,Start) :-
 		write('Stato finale: '), writeln(LastNode),
 		writeln('--------------------'),
 		writeln('Cammino agente'),
-		stampa_mondo(Path)
+		stampa_mondo([va(p(S1,S2))|Path])
 		;
 		reverse(Rev,Path),
 		writeln('--------------------'),
@@ -80,5 +81,9 @@ debug_action(Strat,Start) :-
 		write('Stato finale: '), writeln(LastNode),
 		writeln('--------------------'),
 		writeln('Cammino agente'),
-		stampa_mondo(Path)
+		stampa_mondo([va(p(S1,S2))|Path])
 	    ).
+
+
+
+

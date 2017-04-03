@@ -28,7 +28,7 @@ pred(genera_mondo(integer)).
 % MODO: (+) det
 genera_mondo(Dim) :-
 	not(between(2,30,Dim)), !,
-	writeln("Errore, inserisci un valore della dimensione compreso tra 2 e 10")
+	writeln("Errore, inserisci un valore della dimensione compreso tra 2 e 30")
 	;
 	retractall(size(_)),
 	retractall(mondo(_)),
@@ -189,6 +189,27 @@ associa_o_d(O) :-
 section(visualizzazione).
 % Visualizzazione di un mondo
 
+pred(subset(list,list)).
+% subset(L1,L2): restituisce true se L1 è un sottoinsieme ordinato di
+% L2
+% MODO: (+,+) semidet
+% MODO: (?,+) nondet
+subset([],[]).
+subset(T1,[_|T2]) :-
+	subset(T1,T2).
+subset([H|T1],[H|T2]) :-
+	prefix_subset(T1,T2).
+
+pred(prefix_subset(list,list)).
+% prefix_subset(L1,L2): restituisce true se L1 è un sottoinsieme
+% ordinato di L2 che incomincia dal primo elemento (a meno che sia L1
+% sia []).
+% MODO: (+,+) semidet
+% MODO: (?,+) nondet
+prefix_subset([],_).
+prefix_subset([H|T1],[H|T2]) :-
+	prefix_subset(T1,T2).
+
 pred(significa(atom,[terreno,list(oggetto)])).
 % significa(S,X): associa a X il simbolo S.
 % MODO: (-,+) det
@@ -278,16 +299,15 @@ stampa_mondo(C) :-
 			  (
 			      mondo(c(p(Row,Col),T,O)),
 			      significa(T1,T),
-			      significa(O1,O),
 			      (
 				  member(va(p(Row,Col)),C),
-				  ansi_format([fg(blue)],'~w',[T1])
+				  ansi_format([bold, fg(blue)],'~w',[T1])
 				  ;
 				  not(member(va(p(Row,Col)),C)),
 				  write(T1)
 			      ),
 			      write('|'),
-			      write(O1),
+			      stampa_oggetti(Row,Col,O,C),
 			      (
 			      Col is D, !,
 			      writeln('|')
@@ -308,6 +328,167 @@ stampa_mondo(C) :-
 			 )
 	       )
 	      ).
+
+pred(stampa_oggetti(indice,indice,list(oggetto),list(action))).
+% stampa_oggetti(Row,Col,O,Path): stampa gli oggetti O della posizione
+% p(Row,Col) di colori diversi a seconda se siano stati presi nel Path o
+% meno
+% MODO: (+,+,+,+) det
+
+% Caso 0
+stampa_oggetti(_,_,[],_) :- !,
+	significa(W,[]),
+	write(W).
+
+% Caso 1
+stampa_oggetti(Row,Col,X,C) :-
+	length(X,1), !,
+	member(O,X),
+	(
+	    subset([va(p(Row,Col)),prende(O)],C),
+	    (
+		O = aereo,
+		ansi_format([bold, fg(yellow)],'A',[]),
+		write('--')
+		;
+		O = barca,
+		write('-'),
+		ansi_format([bold, fg(yellow)],'B',[]),
+		write('-')
+		;
+		O = carro,
+		write('--'),
+		ansi_format([bold, fg(yellow)],'C',[])
+	    )
+	    ;
+	    not(subset([va(p(Row,Col)),prende(O)],C)),
+	    significa(W,X),
+	    write(W)
+	).
+
+% Caso 2
+stampa_oggetti(Row,Col,X,C) :-
+	length(X,2), !,
+	member(O1,X),
+	member(O2,X),
+	O1 \= O2,
+	(
+	    not(subset([va(p(Row,Col)),prende(O1)],C)),
+	    not(subset([va(p(Row,Col)),prende(O2)],C)),
+	    significa(W,X),
+	    write(W)
+	    ;
+	    not(subset([va(p(Row,Col)),prende(O1),prende(O2)],C)),
+	    subset([va(p(Row,Col)),prende(O1)],C),
+	    (
+		O1 = aereo,
+		(
+		    O2 = barca,
+		    ansi_format([bold, fg(yellow)],'A',[]),
+		    write('B-')
+		    ;
+		    O2 = carro,
+		    ansi_format([bold, fg(yellow)],'A',[]),
+		    write('-C')
+		)
+		;
+		O1 = barca,
+		(
+		    O2 = aereo,
+		    write('A'),
+		    ansi_format([bold, fg(yellow)],'B',[]),
+		    write('-')
+		    ;
+		    O2 = carro,
+		    write('-'),
+		    ansi_format([bold, fg(yellow)],'B',[]),
+		    write('C')
+		)
+		;
+		O1 = carro,
+		(
+		    O2 = barca,
+		    write('-B'),
+		    ansi_format([bold, fg(yellow)],'C',[])
+		    ;
+		    O2 = aereo,
+		    write('A-'),
+		    ansi_format([bold,fg(yellow)],'C',[])
+		)
+	    )
+	    ;
+	    subset([va(p(Row,Col)),prende(O1),prende(O2)],C),
+	    (
+		((O1 = aereo, O2 = barca);(O1 = barca, O2 = aereo)),
+		ansi_format([bold, fg(yellow)], 'AB', []),
+		write('-')
+		;
+		((O1 = aereo, O2 = carro);(O1 = carro, O2 = aereo)),
+		ansi_format([bold, fg(yellow)], 'A', []),
+		write('-'),
+		ansi_format([bold, fg(yellow)], 'C', [])
+		;
+		((O1 = barca, O2 = carro);(O1 = carro, O2 = barca)),
+		write('-'),
+		ansi_format([bold,fg(yellow)], 'BC', [])
+	    )
+	).
+
+% Caso 3
+stampa_oggetti(Row,Col,X,C) :-
+	member(O1,X),
+	member(O2,X),
+	member(O3,X),
+	O1 \= O2,
+	O1 \= O3,
+	O2 \= O3,
+	(
+	    not(subset([va(p(Row,Col)),prende(O1)],C)),
+	    not(subset([va(p(Row,Col)),prende(O2)],C)),
+	    not(subset([va(p(Row,Col)),prende(O3)],C)),
+	    significa(W,X),
+	    write(W)
+	    ;
+	    not(subset([va(p(Row,Col)),prende(O1),prende(O2)],C)),
+	    not(subset([va(p(Row,Col)),prende(O1),prende(O3)],C)),
+	    not(subset([va(p(Row,Col)),prende(O2),prende(O3)],C)),
+	    subset([va(p(Row,Col)),prende(O1)],C),
+	    (
+		O1 = aereo,
+		ansi_format([bold, fg(yellow)],'A',[]),
+		write('BC')
+		;
+		O1 = barca,
+		write('A'),
+		ansi_format([bold, fg(yellow)],'B',[]),
+		write('C')
+		;
+		O1 = carro,
+		write('AB'),
+		ansi_format([bold, fg(yellow)],'C',[])
+	    )
+	    ;
+	    not(subset([va(p(Row,Col)),prende(O1),prende(O2),prende(O3)],C)),
+	    subset([va(p(Row,Col)),prende(O1),prende(O2)],C),
+	    (
+		((O1 = aereo, O2 = barca);(O1 = barca, O2 = aereo)),
+		ansi_format([bold, fg(yellow)], 'AB', []),
+		write('C')
+		;
+		((O1 = aereo, O2 = carro);(O1 = carro, O2 = aereo)),
+		ansi_format([bold, fg(yellow)], 'A', []),
+		write('B'),
+		ansi_format([bold, fg(yellow)], 'C', [])
+		;
+		((O1 = barca, O2 = carro);(O1 = carro, O2 = barca)),
+		write('A'),
+		ansi_format([bold, fg(yellow)], 'BC', [])
+	    )
+	    ;
+	    subset([va(p(Row,Col)),prende(O1),prende(O2),prende(O3)],C),
+	    ansi_format([bold, fg(yellow)], 'ABC', [])
+	 ).
+
 
 
 

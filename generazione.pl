@@ -263,6 +263,7 @@ stampa_mondo :-
 			  )
 			 ),
 
+
 		   write('|'),
 		   forall(between(1,D,K2),
 			  (
@@ -300,14 +301,30 @@ stampa_mondo(C) :-
 			      mondo(c(p(Row,Col),T,O)),
 			      significa(T1,T),
 			      (
+				  start_cell(p(Row,Col)), !,
+				  ansi_format([bold, fg(green)],'S|',[]),
+				  assert(attiva)
+				  ;
 				  member(va(p(Row,Col)),C),
-				  ansi_format([bold, fg(blue)],'~w',[T1])
+				  ansi_format([bold, fg(red)],'~w|',[T1]),
+				  assert(attiva)
 				  ;
 				  not(member(va(p(Row,Col)),C)),
-				  write(T1)
+				  write(T1), write('|')
 			      ),
-			      write('|'),
-			      stampa_oggetti(Row,Col,O,C),
+			      (
+				  goal_cell(p(Row,Col)), !,
+				  ansi_format([bold, fg(green)],'-G-',[]),
+				  retractall(attiva)
+				  ;
+				  O = [magnete],
+				  attiva,
+				  ansi_format([bold, fg(red)],'-M-',[]),
+				  retractall(attiva)
+				  ;
+				  stampa_oggetti(Row,Col,O,C),
+				  retractall(attiva)
+			      ),
 			      (
 			      Col is D, !,
 			      writeln('|')
@@ -328,6 +345,11 @@ stampa_mondo(C) :-
 			 )
 	       )
 	      ).
+
+pred(attiva).
+% Predicato dinamico che salva la cella in considerazione, per la stampa
+% del mondo
+:- dynamic(attiva/0).
 
 pred(stampa_oggetti(indice,indice,list(oggetto),list(action))).
 % stampa_oggetti(Row,Col,O,Path): stampa gli oggetti O della posizione

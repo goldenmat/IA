@@ -24,6 +24,11 @@ load_heur(H) :-
 	    clear_heuristic),
 	load_strategy([s:astar, p:closed]).
 
+pred(start_cell(casella)).
+% Predicato dinamico di start_cell, usato quando si stampa un mondo con
+% il cammino che segue l'agente
+:- dynamic(start_cell/1).
+
 pred(goal_cell(casella)).
 % Predicato dinamico di goal_cell, usato per ottenere l'euristica
 :- dynamic(goal_cell/1).
@@ -56,6 +61,8 @@ go_graphic(H,S,G) :-
 	load_heur(H), !,
 	Start = [in(S)],
 	Goal = [in(G)|_],
+	retractall(start_cell(_)),
+	assert(start_cell(S)),
 	retractall(goal_cell(_)),
 	assert(goal_cell(G)),
 	solve(start(Start), goal(Goal), pn(LastNode, RevPlan, Cost, _)),
